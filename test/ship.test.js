@@ -16,4 +16,11 @@ describe("Ship creation and basic methods", () => {
     SHIP.isSunk();
     expect(SHIP.sunkState).toBe(false);
   });
+
+  it("Check that isSunk really checks for a sunk ship", () => {
+    const SHIP2 = new Ship(1);
+    SHIP2.hit();
+    SHIP2.isSunk();
+    expect(SHIP2.sunkState).toBe(true);
+  });
 });
