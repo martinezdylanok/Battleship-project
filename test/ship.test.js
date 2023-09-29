@@ -11,4 +11,9 @@ describe("Ship creation and basic methods", () => {
     SHIP.hit();
     expect(SHIP.hitsNum).toBe(1);
   });
+
+  it("Check isSunk method", () => {
+    SHIP.isSunk();
+    expect(SHIP.sunkState).toBe(false);
+  });
 });
