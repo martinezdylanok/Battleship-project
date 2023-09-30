@@ -1,5 +1,3 @@
-import Ship from "./ship.js";
-
 class Gameboard {
   constructor() {
     this.width = 10;
@@ -11,48 +9,46 @@ class Gameboard {
     this.areAllSunk = false;
   }
 
-  const BARQUITO = new Ship(horizontal, 3);
-
   placeShip(x, y, ship) {
     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-        let isValidPlacement = true;
-        let shipSymbol = "S";
+      let isValidPlacement = true;
+      const shipSymbol = "S";
 
-        if(ship.position === "horizontal") {
-            if (x + ship.length -1 >= this.width) {
-                isValidPlacement = false;
-            } else {
-                for (let i = 0; i < ship.length; i++) {
-                    if(this.grid[x + i][y] !== " ") {
-                        isValidPlacement = false;
-                        break;
-                    }
-                }
-                if (isValidPlacement) {
-                    for(let i = 0; i < ship.length; i++) {
-                        this.grid[x + i][y] = shipSymbol;
-                    }
-                }
+      if (ship.position === "horizontal") {
+        if (x + ship.length - 1 >= this.width) {
+          isValidPlacement = false;
+        } else {
+          for (let i = 0; i < ship.length; i += 1) {
+            if (this.grid[x + i][y] !== " ") {
+              isValidPlacement = false;
+              break;
             }
-        } else if (ship.position === "vertical") {
-            if (y + ship.length -1 >= this.height) {
-                isValidPlacement = false;
-            } else {
-                for (let i = 0; i < ship.length; i++) {
-                    if(this.grid[x][y + i] !== " ") {
-                        isValidPlacement = false;
-                        break;
-                    }
-                }
-                if (isValidPlacement) {
-                    for(let i = 0; i < ship.length; i++) {
-                        this.grid[x][y + i] = shipSymbol;
-                    }
-                }
+          }
+          if (isValidPlacement) {
+            for (let i = 0; i < ship.length; i += 1) {
+              this.grid[x + i][y] = shipSymbol;
             }
+          }
         }
-
+      } else if (ship.position === "vertical") {
+        if (y + ship.length - 1 >= this.height) {
+          isValidPlacement = false;
+        } else {
+          for (let i = 0; i < ship.length; i += 1) {
+            if (this.grid[x][y + i] !== " ") {
+              isValidPlacement = false;
+              break;
+            }
+          }
+          if (isValidPlacement) {
+            for (let i = 0; i < ship.length; i += 1) {
+              this.grid[x][y + i] = shipSymbol;
+            }
+          }
+        }
+      }
     }
-        
-    }   
+  }
 }
+
+module.exports = Gameboard;
