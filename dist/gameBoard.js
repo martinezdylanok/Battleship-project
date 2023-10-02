@@ -10,8 +10,9 @@ class Gameboard {
   }
 
   placeShip(x, y, ship) {
+    let isValidPlacement = false;
     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-      let isValidPlacement = true;
+      isValidPlacement = true;
       const shipSymbol = "S";
 
       if (ship.position === "horizontal") {
@@ -48,6 +49,7 @@ class Gameboard {
         }
       }
     }
+    return isValidPlacement;
   }
 }
 

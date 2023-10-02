@@ -1,6 +1,6 @@
 const Ship = require("../dist/ship.js");
 
-const SHIP = new Ship(5);
+const SHIP = new Ship("horizontal", 5);
 
 describe("Ship creation and basic methods", () => {
   it("Create a ship with a custom length", () => {
@@ -18,7 +18,7 @@ describe("Ship creation and basic methods", () => {
   });
 
   it("Check that isSunk really checks for a sunk ship", () => {
-    const SHIP2 = new Ship(1);
+    const SHIP2 = new Ship("horizontal", 1);
     SHIP2.hit();
     SHIP2.isSunk();
     expect(SHIP2.sunkState).toBe(true);
