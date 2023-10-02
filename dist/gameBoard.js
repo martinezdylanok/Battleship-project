@@ -11,13 +11,14 @@ class Gameboard {
 
   placeShip(x, y, ship) {
     let isValidPlacement = false;
-
-    if (x >= 0 && y >= 0) {
+    if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      isValidPlacement = true;
       const shipSymbol = "S";
 
       if (ship.position === "horizontal") {
-        if (x + ship.length <= this.width) {
-          isValidPlacement = true;
+        if (x + ship.length - 1 >= this.width) {
+          isValidPlacement = false;
+        } else {
           for (let i = 0; i < ship.length; i += 1) {
             if (this.grid[x + i][y] !== " ") {
               isValidPlacement = false;
@@ -31,8 +32,9 @@ class Gameboard {
           }
         }
       } else if (ship.position === "vertical") {
-        if (y + ship.length <= this.height) {
-          isValidPlacement = true;
+        if (y + ship.length - 1 >= this.height) {
+          isValidPlacement = false;
+        } else {
           for (let i = 0; i < ship.length; i += 1) {
             if (this.grid[x][y + i] !== " ") {
               isValidPlacement = false;
