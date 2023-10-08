@@ -4,11 +4,12 @@ class Ship {
       this.type = type;
       this.length = this.assignLength(type);
       this.hitsNum = 0;
-      this.sunkState = false;
+      this.sunkState = this.isSunk();
    }
 
    hit() {
       this.hitsNum += 1;
+      this.sunkState = this.isSunk();
    }
 
    assignLength(type) {
@@ -27,10 +28,10 @@ class Ship {
    }
 
    isSunk() {
-      if (this.hitsNum === this.length) {
-         this.sunkState = true;
+      if (this.hitsNum >= this.length) {
+         return true;
       }
-      return this.sunkState;
+      return false;
    }
 }
 
