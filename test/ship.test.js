@@ -24,15 +24,14 @@ describe("Ship creation and basic methods", () => {
 
    it("Check isSunk method", () => {
       const SHIP = new Ship("Horizontal", "Carrier");
-      SHIP.isSunk();
       expect(SHIP.sunkState).toBe(false);
    });
 
    it("Check that isSunk really checks for a sunk ship", () => {
-      const SHIP2 = new Ship("Horizontal", "Patrolboat");
-      SHIP2.hit();
-      SHIP2.hit();
-      SHIP2.isSunk();
-      expect(SHIP2.sunkState).toBe(true);
+      const SHIP = new Ship("Horizontal", "Patrolboat");
+      for (let i = 0; i < SHIP.length + 1; i += 1) {
+         SHIP.hit();
+      }
+      expect(SHIP.sunkState).toBe(true);
    });
 });
