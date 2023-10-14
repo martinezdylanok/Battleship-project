@@ -1,6 +1,6 @@
-const Player = require("../dist/player.js");
-const Gameboard = require("../dist/gameBoard.js");
-const Ship = require("../dist/ship.js");
+import Player from "../dist/player";
+import Gameboard from "../dist/gameBoard";
+import Ship from "../dist/ship";
 
 describe("Player class tests", () => {
    it("Should create a Player object with the specified name", () => {

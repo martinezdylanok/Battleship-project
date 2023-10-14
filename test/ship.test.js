@@ -1,4 +1,4 @@
-const Ship = require("../dist/ship.js");
+import Ship from "../dist/ship.js";
 
 describe("Ship creation and basic methods", () => {
    it("Check ship position", () => {
