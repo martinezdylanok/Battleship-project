@@ -1,5 +1,4 @@
-const Gameboard = require("./gameBoard");
-const Ship = require("./ship");
+import Ship from "./ship.js";
 
 class Player {
    constructor(name) {
@@ -58,4 +57,4 @@ class Player {
    }
 }
 
-module.exports = Player;
+export default Player;
