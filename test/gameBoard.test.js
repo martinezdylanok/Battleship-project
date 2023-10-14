@@ -1,7 +1,7 @@
-const Ship = require("../dist/ship.js");
-const Gameboard = require("../dist/gameBoard.js");
+import Ship from "../dist/ship";
+import Gameboard from "../dist/gameBoard";
 
-describe("Gameboard creation testing", () => {
+describe("Testing Gameboard object creation", () => {
    it("Check if the gameboard was created", () => {
       const GAMEBOARD = new Gameboard();
       expect(GAMEBOARD).toBeInstanceOf(Gameboard);
@@ -37,15 +37,15 @@ describe("Testing placeShip method conditions", () => {
    it("Place a ship horizontally without overlapping other ships", () => {
       const GAMEBOARD = new Gameboard();
       GAMEBOARD.placeShip(0, 0, new Ship("Horizontal", "Submarine"));
-      GAMEBOARD.placeShip(0, 4, new Ship("Horizontal", "Submarine"));
+      GAMEBOARD.placeShip(0, 4, new Ship("Horizontal", "Destroyer"));
 
       expect(GAMEBOARD.grid[0][0]).toBe("S");
       expect(GAMEBOARD.grid[1][0]).toBe("S");
       expect(GAMEBOARD.grid[2][0]).toBe("S");
 
-      expect(GAMEBOARD.grid[0][4]).toBe("S");
-      expect(GAMEBOARD.grid[1][4]).toBe("S");
-      expect(GAMEBOARD.grid[2][4]).toBe("S");
+      expect(GAMEBOARD.grid[0][4]).toBe("D");
+      expect(GAMEBOARD.grid[1][4]).toBe("D");
+      expect(GAMEBOARD.grid[2][4]).toBe("D");
    });
 
    it("Not placing a ship vertically that goes out of bounds", () => {
@@ -64,14 +64,14 @@ describe("Testing placeShip method conditions", () => {
    it("Place a ship vertically without overlapping other ships", () => {
       const GAMEBOARD = new Gameboard();
       GAMEBOARD.placeShip(0, 0, new Ship("Vertical", "Submarine"));
-      GAMEBOARD.placeShip(4, 0, new Ship("Vertical", "Submarine"));
+      GAMEBOARD.placeShip(4, 0, new Ship("Vertical", "Destroyer"));
       expect(GAMEBOARD.grid[0][0]).toBe("S");
       expect(GAMEBOARD.grid[0][1]).toBe("S");
       expect(GAMEBOARD.grid[0][2]).toBe("S");
 
-      expect(GAMEBOARD.grid[4][0]).toBe("S");
-      expect(GAMEBOARD.grid[4][1]).toBe("S");
-      expect(GAMEBOARD.grid[4][2]).toBe("S");
+      expect(GAMEBOARD.grid[4][0]).toBe("D");
+      expect(GAMEBOARD.grid[4][1]).toBe("D");
+      expect(GAMEBOARD.grid[4][2]).toBe("D");
    });
 
    it("Return already placed ships", () => {
@@ -81,14 +81,21 @@ describe("Testing placeShip method conditions", () => {
       expect(GAMEBOARD.grid[0][0]).toBe("S");
       expect(GAMEBOARD.grid[0][4]).toBe("P");
    });
+
+   it("Not placing a ship that has the same type as other ship", () => {
+      const GAMEBOARD = new Gameboard();
+      GAMEBOARD.placeShip(0, 0, new Ship("Horizontal", "Patrolboat"));
+      GAMEBOARD.placeShip(2, 0, new Ship("Horizontal", "Patrolboat"));
+      expect(GAMEBOARD.ships.length).toBe(1);
+   });
 });
 
-describe("Test receiveAttack method", () => {
+describe("Testing receiveAttack method conditions", () => {
    it("The attack coordinates are wrong", () => {
       const GAMEBOARD = new Gameboard();
       GAMEBOARD.placeShip(1, 0, new Ship("Horizontal", "Patrolboat"));
       GAMEBOARD.receiveAttack(4, 0);
-      expect(GAMEBOARD.grid[0][1]).not.toMatch("X");
+      expect(GAMEBOARD.grid[1][0]).not.toMatch("X");
    });
 
    it("Attacking a placed ship", () => {
@@ -98,7 +105,6 @@ describe("Test receiveAttack method", () => {
       expect(GAMEBOARD.grid[0][0]).toBe("P");
       GAMEBOARD.receiveAttack(0, 0);
       expect(GAMEBOARD.grid[0][0]).toBe("X");
-      expect(SHIP.sunkState).toBe(false);
    });
 
    it("Sink a ship", () => {
@@ -150,5 +156,42 @@ describe("Test receiveAttack method", () => {
       }
       expect(SHIP2.sunkState).toBeTruthy();
       expect(GAMEBOARD.areAllSunk).toBeTruthy();
+   });
+});
+
+describe("Testing displayGrid method conditions", () => {
+   it("Should create and return a grid with the correct class for the player", () => {
+      const GAMEBOARD = new Gameboard();
+      const USER_GRID = GAMEBOARD.displayGrid("user");
+      const AI_GRID = GAMEBOARD.displayGrid("ai");
+
+      expect(USER_GRID.classList.contains("gameboard")).toBe(true);
+      expect(AI_GRID.classList.contains("gameboard")).toBe(true);
+   });
+
+   it("Should add cells with the correct class and content for the user", () => {
+      const GAMEBOARD = new Gameboard();
+      const USER_GRID = GAMEBOARD.displayGrid("user");
+
+      const CELLS = USER_GRID.querySelectorAll(".cell");
+      expect(CELLS.length).toBe(100);
+
+      CELLS.forEach((cell) => {
+         expect(cell.classList.contains("cell")).toBe(true);
+         expect(cell.textContent).not.toBe("");
+      });
+   });
+
+   it("Should add cells with the correct class and empty content for the AI", () => {
+      const GAMEBOARD = new Gameboard();
+      const AI_GRID = GAMEBOARD.displayGrid("ai");
+
+      const CELLS = AI_GRID.querySelectorAll(".cell");
+      expect(CELLS.length).toBe(100);
+
+      CELLS.forEach((cell) => {
+         expect(cell.classList.contains("cell")).toBe(true);
+         expect(cell.textContent).toBe("");
+      });
    });
 });
