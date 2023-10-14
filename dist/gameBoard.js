@@ -8,6 +8,12 @@ class Gameboard {
    }
 
    placeShip(x, y, ship) {
+      for (let i = 0; i < this.ships.length; i += 1) {
+         if (this.ships[i].type === ship.type) {
+            return;
+         }
+      }
+
       let isValidPlacement = true;
       const SHIP_SYMBOL = Array.from(ship.type)[0];
 
@@ -15,15 +21,15 @@ class Gameboard {
          if (x + ship.length - 1 >= this.width) {
             isValidPlacement = false;
          } else {
-            for (let i = 0; i < ship.length; i += 1) {
-               if (this.grid[x + i][y] !== " ") {
+            for (let j = 0; j < ship.length; j += 1) {
+               if (this.grid[x + j][y] !== " ") {
                   isValidPlacement = false;
                   break;
                }
             }
             if (isValidPlacement) {
-               for (let i = 0; i < ship.length; i += 1) {
-                  this.grid[x + i][y] = SHIP_SYMBOL;
+               for (let j = 0; j < ship.length; j += 1) {
+                  this.grid[x + j][y] = SHIP_SYMBOL;
                }
                this.ships.push(ship);
             }
@@ -32,15 +38,15 @@ class Gameboard {
          if (y + ship.length - 1 >= this.height) {
             isValidPlacement = false;
          } else {
-            for (let i = 0; i < ship.length; i += 1) {
-               if (this.grid[x][y + i] !== " ") {
+            for (let j = 0; j < ship.length; j += 1) {
+               if (this.grid[x][y + j] !== " ") {
                   isValidPlacement = false;
                   break;
                }
             }
             if (isValidPlacement) {
-               for (let i = 0; i < ship.length; i += 1) {
-                  this.grid[x][y + i] = SHIP_SYMBOL;
+               for (let j = 0; j < ship.length; j += 1) {
+                  this.grid[x][y + j] = SHIP_SYMBOL;
                }
                this.ships.push(ship);
             }
@@ -72,6 +78,22 @@ class Gameboard {
          this.grid[x][y] = "O";
       }
    }
+
+   displayGrid(player) {
+      const GRID = document.createElement("div");
+      for (let x = 0; x < this.width; x += 1) {
+         for (let y = 0; y < this.height; y += 1) {
+            const CELL = document.createElement("div");
+            if (player !== "ai") {
+               CELL.textContent = this.grid[x][y];
+            }
+            CELL.classList.add("cell");
+            GRID.appendChild(CELL);
+         }
+         GRID.classList.add("gameboard");
+      }
+      return GRID;
+   }
 }
 
-module.exports = Gameboard;
+export default Gameboard;
