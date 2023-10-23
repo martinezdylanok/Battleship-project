@@ -4,6 +4,7 @@ class Gameboard {
       this.height = 10;
       this.grid = Array.from({ length: this.width }, () => Array.from({ length: this.height }, () => " "));
       this.ships = [];
+      this.missedShots = 0;
       this.areAllSunk = false;
    }
 
@@ -73,26 +74,13 @@ class Gameboard {
                ship.hit();
             }
          });
+
          this.areAllSunk = this.ships.every((ship) => ship.isSunk());
       } else {
          this.grid[x][y] = "O";
+         this.missedShots += 1;
       }
-   }
-
-   displayGrid(player) {
-      const GRID = document.createElement("div");
-      for (let x = 0; x < this.width; x += 1) {
-         for (let y = 0; y < this.height; y += 1) {
-            const CELL = document.createElement("div");
-            if (player !== "ai") {
-               CELL.textContent = this.grid[x][y];
-            }
-            CELL.classList.add("cell");
-            GRID.appendChild(CELL);
-         }
-         GRID.classList.add("gameboard");
-      }
-      return GRID;
+      return [x, y];
    }
 }
 
