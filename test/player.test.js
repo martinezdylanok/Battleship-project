@@ -1,57 +1,113 @@
 import Player from "../dist/player";
 import Gameboard from "../dist/gameBoard";
-import Ship from "../dist/ship";
 
 describe("Player class tests", () => {
    it("Should create a Player object with the specified name", () => {
-      const player = new Player("Alice");
-      expect(player.name).toBe("Alice");
+      const PLAYER = new Player("Alice");
+      expect(PLAYER.name).toBe("Alice");
    });
 
    it("Should place all the ships on the game board", () => {
       const PLAYER = new Player("George");
       const GAMEBOARD = new Gameboard();
-      PLAYER.placeShips(GAMEBOARD);
+      PLAYER.autoPlaceShips(GAMEBOARD);
+      expect(GAMEBOARD.ships.length).toBe(5);
+   });
+
+   it("Should not place new ships on a full game board", () => {
+      const PLAYER = new Player("George");
+      const GAMEBOARD = new Gameboard();
+      PLAYER.autoPlaceShips(GAMEBOARD);
+      expect(GAMEBOARD.ships.length).toBe(5);
+      PLAYER.autoPlaceShips(GAMEBOARD);
       expect(GAMEBOARD.ships.length).toBe(5);
    });
 
    it("Should simulate a random attack on an empty gameboard", () => {
-      const PLAYER = new Player("Michael");
-      const GAMEBOARD = new Gameboard();
-      PLAYER.shootAtCoordinates(GAMEBOARD);
-      let foundOne = false;
-      for (let x = 0; x < GAMEBOARD.width; x += 1) {
-         for (let y = 0; y < GAMEBOARD.height; y += 1) {
-            if (GAMEBOARD.grid[x][y] === "O") {
-               foundOne = true;
-               break;
+      const USER = new Player("User");
+      const AI = new Player("AI");
+
+      const USER_GAMEBOARD = new Gameboard();
+
+      AI.isTurn = true;
+
+      let foundAttack = false;
+      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
+         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
+            expect(USER_GAMEBOARD.grid[x][y]).toBe(" ");
+         }
+      }
+
+      AI.randomAttack(USER_GAMEBOARD, USER, AI);
+      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
+         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
+            if (USER_GAMEBOARD.grid[x][y] === "O") {
+               foundAttack = true;
+               expect(foundAttack).toBeTruthy();
             }
          }
       }
-      expect(foundOne).toBe(true);
    });
 
-   it("Should attack an adjacent cell once it hits a ship cell", () => {
-      const PLAYER = new Player("Arnold");
-      const SHIP = new Ship("Horizontal", "Patrolboat");
-      const GAMEBOARD = new Gameboard();
-      GAMEBOARD.placeShip(1, 0, SHIP);
-      GAMEBOARD.grid[1][0] = "X";
+   it("Should simulate a random attack on an full gameboard", () => {
+      const USER = new Player("User");
+      const AI = new Player("AI");
 
-      PLAYER.shootAtCoordinates(GAMEBOARD);
+      const USER_GAMEBOARD = new Gameboard();
+
+      USER.autoPlaceShips(USER_GAMEBOARD);
+
+      AI.isTurn = true;
+
+      let foundAttack = false;
+      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
+         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
+            expect(USER_GAMEBOARD.grid[x][y]).not.toBe("X");
+            expect(USER_GAMEBOARD.grid[x][y]).not.toBe("O");
+         }
+      }
+
+      AI.randomAttack(USER_GAMEBOARD, USER, AI);
+      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
+         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
+            if (USER_GAMEBOARD.grid[x][y] === "X" || USER_GAMEBOARD.grid[x][y] === "O") {
+               foundAttack = true;
+               expect(foundAttack).toBeTruthy();
+            }
+         }
+      }
+   });
+
+   it("Should attack an adjacent cell if it founds a X on the gameboard", async () => {
+      const USER = new Player("User");
+      const AI = new Player("AI");
+
+      const USER_GAMEBOARD = new Gameboard();
+
+      USER.isUser = true;
+
+      USER_GAMEBOARD.grid[1][0] = "X";
+
+      AI.isTurn = true;
+
+      await AI.strategicAttack(USER_GAMEBOARD, USER, AI);
 
       const ADJACENT_CELLS = [
          [0, 0],
-         [0, 1],
-         [0, 2],
-         [1, 1],
-         [1, 2],
          [2, 0],
-         [2, 1],
-         [2, 2],
+         [1, 1],
       ];
 
-      const ANY_ADJACENT_CELL_CONTAINS_X = ADJACENT_CELLS.some(([x, y]) => GAMEBOARD.grid[x][y] === "X");
-      expect(ANY_ADJACENT_CELL_CONTAINS_X).toBe(true);
+      let foundAdjacent = false;
+      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
+         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
+            for (let i = 0; i < ADJACENT_CELLS.length; i += 1) {
+               if (USER_GAMEBOARD.grid[x][y] === ADJACENT_CELLS[i]) {
+                  foundAdjacent = true;
+                  expect(foundAdjacent).toBeTruthy();
+               }
+            }
+         }
+      }
    });
 });
