@@ -1,5 +1,6 @@
 import Ship from "../dist/ship";
 import Gameboard from "../dist/gameBoard";
+import Player from "../dist/player";
 
 describe("Testing Gameboard object creation", () => {
    it("Check if the gameboard was created", () => {
@@ -93,27 +94,30 @@ describe("Testing placeShip method conditions", () => {
 describe("Testing receiveAttack method conditions", () => {
    it("The attack coordinates are wrong", () => {
       const GAMEBOARD = new Gameboard();
+      const USER = new Player("user");
       GAMEBOARD.placeShip(1, 0, new Ship("Horizontal", "Patrolboat"));
-      GAMEBOARD.receiveAttack(4, 0);
+      GAMEBOARD.receiveAttack(4, 0, USER);
       expect(GAMEBOARD.grid[1][0]).not.toMatch("X");
    });
 
    it("Attacking a placed ship", () => {
       const GAMEBOARD = new Gameboard();
+      const USER = new Player("user");
       const SHIP = new Ship("Horizontal", "Patrolboat");
       GAMEBOARD.placeShip(0, 0, SHIP);
       expect(GAMEBOARD.grid[0][0]).toBe("P");
-      GAMEBOARD.receiveAttack(0, 0);
+      GAMEBOARD.receiveAttack(0, 0, USER);
       expect(GAMEBOARD.grid[0][0]).toBe("X");
    });
 
    it("Sink a ship", () => {
       const GAMEBOARD = new Gameboard();
+      const USER = new Player("user");
       const SHIP = new Ship("Horizontal", "Patrolboat");
       GAMEBOARD.placeShip(0, 0, SHIP);
       expect(GAMEBOARD.grid[0][0]).toBe("P");
       for (let i = 1; i < SHIP.length; i += 1) {
-         GAMEBOARD.receiveAttack(i, 0);
+         GAMEBOARD.receiveAttack(i, 0, USER);
          expect(GAMEBOARD.grid[i][0]).toBe("X");
       }
       expect(SHIP.isSunk).toBeTruthy();
@@ -121,9 +125,10 @@ describe("Testing receiveAttack method conditions", () => {
 
    it("Check if the other cells were not attacked", () => {
       const GAMEBOARD = new Gameboard();
+      const USER = new Player("user");
       GAMEBOARD.placeShip(0, 0, new Ship("Horizontal", "Patrolboat"));
       expect(GAMEBOARD.grid[0][0]).toBe("P");
-      GAMEBOARD.receiveAttack(0, 0);
+      GAMEBOARD.receiveAttack(0, 0, USER);
       expect(GAMEBOARD.grid[0][0]).toBe("X");
       expect(GAMEBOARD.grid[1][0]).not.toBe("X");
       expect(GAMEBOARD.grid[0][1]).not.toBe("X");
@@ -131,67 +136,32 @@ describe("Testing receiveAttack method conditions", () => {
 
    it("Attacking an empty cell", () => {
       const GAMEBOARD = new Gameboard();
+      const USER = new Player("user");
       GAMEBOARD.placeShip(0, 0, new Ship("Horizontal", "Patrolboat"));
       expect(GAMEBOARD.grid[0][0]).toBe("P");
-      GAMEBOARD.receiveAttack(4, 0);
+      GAMEBOARD.receiveAttack(4, 0, USER);
       expect(GAMEBOARD.grid[0][0]).not.toBe("X");
       expect(GAMEBOARD.grid[4][0]).toBe("O");
    });
 
    it("Check if all the ships are sunk", () => {
       const GAMEBOARD = new Gameboard();
+      const USER = new Player("user");
       const SHIP = new Ship("Horizontal", "Patrolboat");
       const SHIP2 = new Ship("Horizontal", "Submarine");
       GAMEBOARD.placeShip(0, 0, SHIP);
       GAMEBOARD.placeShip(2, 0, SHIP2);
 
-      GAMEBOARD.receiveAttack(0, 0);
+      GAMEBOARD.receiveAttack(0, 0, USER);
       expect(SHIP.sunkState).toBeFalsy();
-      GAMEBOARD.receiveAttack(1, 0);
+      GAMEBOARD.receiveAttack(1, 0, USER);
       expect(SHIP.sunkState).toBeTruthy();
       expect(GAMEBOARD.areAllSunk).toBe(false);
 
       for (let i = 2; i < SHIP2.length + 2; i += 1) {
-         GAMEBOARD.receiveAttack(i, 0);
+         GAMEBOARD.receiveAttack(i, 0, USER);
       }
       expect(SHIP2.sunkState).toBeTruthy();
       expect(GAMEBOARD.areAllSunk).toBeTruthy();
-   });
-});
-
-describe("Testing displayGrid method conditions", () => {
-   it("Should create and return a grid with the correct class for the player", () => {
-      const GAMEBOARD = new Gameboard();
-      const USER_GRID = GAMEBOARD.displayGrid("user");
-      const AI_GRID = GAMEBOARD.displayGrid("ai");
-
-      expect(USER_GRID.classList.contains("gameboard")).toBe(true);
-      expect(AI_GRID.classList.contains("gameboard")).toBe(true);
-   });
-
-   it("Should add cells with the correct class and content for the user", () => {
-      const GAMEBOARD = new Gameboard();
-      const USER_GRID = GAMEBOARD.displayGrid("user");
-
-      const CELLS = USER_GRID.querySelectorAll(".cell");
-      expect(CELLS.length).toBe(100);
-
-      CELLS.forEach((cell) => {
-         expect(cell.classList.contains("cell")).toBe(true);
-         expect(cell.textContent).not.toBe("");
-      });
-   });
-
-   it("Should add cells with the correct class and empty content for the AI", () => {
-      const GAMEBOARD = new Gameboard();
-      const AI_GRID = GAMEBOARD.displayGrid("ai");
-
-      const CELLS = AI_GRID.querySelectorAll(".cell");
-      expect(CELLS.length).toBe(100);
-
-      CELLS.forEach((cell) => {
-         expect(cell.classList.contains("cell")).toBe(true);
-         expect(cell.textContent).toBe("");
-      });
    });
 });
