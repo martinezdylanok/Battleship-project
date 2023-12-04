@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="module" src="../src/main.js"></script>
+    <script defer type="module" src="../src/main.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>Battleship project</title>
 </head>
@@ -12,11 +12,56 @@
         <h1>BATTLESHIP</h1>
     </header>
     <main>
-        <div class="content-container" id="user-container">
-            <span>Your gameboard</span>
+        <div class="main-menu">
+            <nav>
+                <span>BATTLESHIP</span>
+                <form>
+                    <input type="text" id="name-field" placeholder="Enter your name, captain">
+                    <input type="button" value="CREATE PLAYER" id="create-player">
+                </form>
+            </nav>
         </div>
-        <div class="content-container" id="ai-container">
-            <span>Enemy's gameboard</span>
+        <div class="user-menu-background">
+            <div class="user-menu">
+                <div class="ships-and-button">
+                    <div class="ships-container">
+                        <div class="ship" id="0" data-type="Carrier" draggable="true">
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                        </div>
+                        <div class="ship" id="1" data-type="Battleship" draggable="true">
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                        </div>
+                        <div class="ship" id="2" data-type="Destroyer" draggable="true">
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                        </div>
+                        <div class="ship" id="3" data-type="Submarine" draggable="true">
+                            <div class="part"></div>
+                            <div class="part"></div>
+                            <div class="part"></div>
+                        </div>
+                        <div class="ship" id="4" data-type="Patrolboat" draggable="true">
+                            <div class="part"></div>
+                            <div class="part"></div>
+                        </div>
+                    </div>
+                    <button class="rotate-button">ROTATE SHIPS</button>
+                </div>
+                <div class="gameboard-container" id="positioning-container"></div>
+            </div>
+            <button class="start-button">START</button>
+        </div>
+        <div class="main-game">
+            <div class="gameboard-container" id="user-container"></div>
+            <div class="gameboard-container" id="ai-container"></div>
         </div>
     </main>
     <footer>
