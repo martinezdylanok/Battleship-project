@@ -82,14 +82,14 @@ class Helpers {
       }
    }
 
-   displayGrid(PLAYER, GRID) {
-      if (PLAYER.isUser) {
-         const USER_GRID = GRID;
+   displayGrid(grid, player) {
+      if (player.isUser) {
+         const USER_GRID = grid;
          const POSITIONING_CONTAINER = document.getElementById("positioning-container");
 
          POSITIONING_CONTAINER.appendChild(USER_GRID);
       } else {
-         const AI_GRID = GRID;
+         const AI_GRID = grid;
          const AI_CONTAINER = document.getElementById("ai-container");
 
          AI_CONTAINER.appendChild(AI_GRID);
