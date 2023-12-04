@@ -25,22 +25,6 @@ class Helpers {
       return SHIPS_ELEMENTS;
    }
 
-   displayStartButton(SHIPS_ELEMENTS) {
-      if (SHIPS_ELEMENTS.length <= 0) {
-         const START_BUTTON = document.querySelector(".start-button");
-         START_BUTTON.classList.add("allowed");
-         START_BUTTON.addEventListener("click", this.startGame.bind(this));
-      }
-   }
-
-   startGame() {
-      const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
-      const MAIN_GAME = document.querySelector(".main-game");
-
-      USER_MENU_BACKGROUND.classList.add("hidden");
-      MAIN_GAME.classList.remove("hidden");
-   }
-
    createGrid(gameboard, player) {
       const GRID = document.createElement("div");
       GRID.classList.add("grid");
@@ -70,18 +54,6 @@ class Helpers {
       return GRID;
    }
 
-   updateGrid(USER_GAMEBOARD) {
-      const GRID = document.getElementById("user-grid");
-
-      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
-         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
-            const CELL_ID = `user-cell-${x}-${y}`;
-            const CELL = GRID.querySelector(`#${CELL_ID}`);
-            CELL.textContent = USER_GAMEBOARD.grid[x][y];
-         }
-      }
-   }
-
    displayGrid(grid, player) {
       if (player.isUser) {
          const USER_GRID = grid;
@@ -94,6 +66,32 @@ class Helpers {
 
          AI_CONTAINER.appendChild(AI_GRID);
       }
+   }
+
+   updateGrid(USER_GAMEBOARD) {
+      const GRID = document.getElementById("user-grid");
+
+      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
+         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
+            const CELL_ID = `user-cell-${x}-${y}`;
+            const CELL = GRID.querySelector(`#${CELL_ID}`);
+            CELL.textContent = USER_GAMEBOARD.grid[x][y];
+         }
+      }
+   }
+
+   allowStartButton() {
+      const START_BUTTON = document.querySelector(".start-button");
+      START_BUTTON.classList.add("allowed");
+      START_BUTTON.addEventListener("click", this.startGame.bind(this));
+   }
+
+   startGame() {
+      const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
+      const MAIN_GAME = document.querySelector(".main-game");
+
+      USER_MENU_BACKGROUND.remove();
+      MAIN_GAME.classList.remove("hidden");
    }
 
    rotateUserShips(SHIPS_ELEMENTS, SHIPS_OBJECTS) {
@@ -171,7 +169,9 @@ class Helpers {
                   SHIPS_ELEMENTS.splice(INDEX, 1);
                   draggedShip.remove();
                   INSTANCE.updateGrid(USER_GAMEBOARD);
-                  INSTANCE.displayStartButton(SHIPS_ELEMENTS);
+                  if (SHIPS_ELEMENTS.length <= 0) {
+                     INSTANCE.allowStartButton();
+                  }
                }
             }
 
@@ -186,7 +186,7 @@ class Helpers {
       });
    }
 
-   markAttackedCell(gameboard, player, PREVIOUS_SHOTS, X, Y) {
+   updateAttackedCell(gameboard, player, PREVIOUS_SHOTS, X, Y) {
       if (gameboard.missedShots > PREVIOUS_SHOTS) {
          const CELL_ID = player.isUser ? `user-cell-${X}-${Y}` : `ai-cell-${X}-${Y}`;
          const CELL = document.querySelector(`#${CELL_ID}`);

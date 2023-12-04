@@ -8,6 +8,8 @@ const GAME = () => {
    const AI_GAMEBOARD = new Gameboard();
    const USER = new Player();
    const AI = new Player();
+   USER.isTurn = true;
+   USER.isUser = true;
 
    const USER_GRID = HELPERS.createGrid(USER_GAMEBOARD, USER);
    const AI_GRID = HELPERS.createGrid(AI_GAMEBOARD, AI);
