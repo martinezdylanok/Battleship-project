@@ -177,7 +177,7 @@ main {
    border: none;
 }
 
-.start-button.visible {
+.start-button.allowed {
    cursor: pointer;
    color: black;
    background-color: rgb(100, 100, 100, .8);
@@ -202,7 +202,7 @@ main {
    gap: 20px;
 }
 
-.gameboard {
+.grid {
    display: grid;
    grid-template-columns: repeat(10, 1fr);
    grid-template-rows: repeat(10, 1fr);
