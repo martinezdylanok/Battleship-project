@@ -28,7 +28,7 @@ class Helpers {
    displayStartButton(SHIPS_ELEMENTS) {
       if (SHIPS_ELEMENTS.length <= 0) {
          const START_BUTTON = document.querySelector(".start-button");
-         START_BUTTON.classList.add("visible");
+         START_BUTTON.classList.add("allowed");
          START_BUTTON.addEventListener("click", this.startGame.bind(this));
       }
    }
@@ -43,12 +43,12 @@ class Helpers {
 
    createGrid(gameboard, player) {
       const GRID = document.createElement("div");
-      GRID.classList.add("gameboard");
+      GRID.classList.add("grid");
 
       if (player.isUser === true) {
-         GRID.setAttribute("id", "user-gameboard");
+         GRID.setAttribute("id", "user-grid");
       } else {
-         GRID.setAttribute("id", "ai-gameboard");
+         GRID.setAttribute("id", "ai-grid");
       }
 
       for (let x = 0; x < gameboard.width; x += 1) {
@@ -71,7 +71,7 @@ class Helpers {
    }
 
    updateGrid(USER_GAMEBOARD) {
-      const GRID = document.getElementById("user-gameboard");
+      const GRID = document.getElementById("user-grid");
 
       for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
          for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
@@ -128,7 +128,7 @@ class Helpers {
    }
 
    dragUserShips(USER_GAMEBOARD, SHIPS_ELEMENTS, SHIPS_OBJECTS) {
-      const GRID = document.getElementById("user-gameboard");
+      const GRID = document.getElementById("user-grid");
       const CELLS = Array.from(GRID.children);
 
       const INSTANCE = this;
