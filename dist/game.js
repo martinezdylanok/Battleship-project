@@ -14,8 +14,8 @@ const GAME = () => {
    const USER_GRID = HELPERS.createGrid(USER_GAMEBOARD, USER);
    const AI_GRID = HELPERS.createGrid(AI_GAMEBOARD, AI);
 
-   HELPERS.displayGrid(USER, USER_GRID);
-   HELPERS.displayGrid(AI, AI_GRID);
+   HELPERS.displayGrid(USER_GRID, USER);
+   HELPERS.displayGrid(AI_GRID, AI);
 
    const INITIAL_SHIPS_ELEMENTS = HELPERS.SHIPS_ELEMENTS;
    const INITIAL_SHIPS_OBJECTS = HELPERS.SHIPS_OBJECTS;
