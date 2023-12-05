@@ -85,6 +85,13 @@ class Helpers {
       }
    }
 
+   appendFinalGrid() {
+      const GRID = document.getElementById("user-grid");
+      const USER_CONTAINER = document.getElementById("user-container");
+
+      USER_CONTAINER.appendChild(GRID);
+   }
+
    storeGameData(user, ai, userGameboard, aiGameboard) {
       this.USER = user;
       this.AI = ai;
@@ -132,6 +139,8 @@ class Helpers {
    startGame() {
       const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
       const MAIN_GAME = document.querySelector(".main-game");
+
+      this.appendFinalGrid();
 
       USER_MENU_BACKGROUND.remove();
       MAIN_GAME.classList.remove("hidden");
