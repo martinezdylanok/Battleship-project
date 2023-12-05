@@ -4,6 +4,11 @@ class Helpers {
    constructor() {
       this.SHIPS_OBJECTS = this.createShipObjects();
       this.SHIPS_ELEMENTS = this.selectShipsElements();
+      this.USER_NAME = "";
+      this.USER = "";
+      this.AI = "";
+      this.USER_GAMEBOARD = "";
+      this.AI_GAMEBOARD = "";
    }
 
    createShipObjects() {
@@ -78,6 +83,44 @@ class Helpers {
             CELL.textContent = USER_GAMEBOARD.grid[x][y];
          }
       }
+   }
+
+   storeGameData(user, ai, userGameboard, aiGameboard) {
+      this.USER = user;
+      this.AI = ai;
+      this.USER_GAMEBOARD = userGameboard;
+      this.AI_GAMEBOARD = aiGameboard;
+      this.getUserName();
+   }
+
+   getUserName() {
+      const FORM_BUTTON = document.getElementById("create-player");
+      FORM_BUTTON.addEventListener("click", () => {
+         const INPUT_VALUE = document.getElementById("name-field").value;
+         this.USER_NAME = INPUT_VALUE;
+         this.creatAndDisplayGrids();
+      });
+   }
+
+   creatAndDisplayGrids() {
+      const USER_GRID = this.createGrid(this.USER_GAMEBOARD, this.USER);
+      const AI_GRID = this.createGrid(this.AI_GAMEBOARD, this.AI);
+
+      this.displayGrid(USER_GRID, this.USER);
+      this.displayGrid(AI_GRID, this.AI);
+
+      this.transitionToUserShipPlacement();
+   }
+
+   transitionToUserShipPlacement() {
+      const MAIN_MENU = document.querySelector(".main-menu");
+      const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
+
+      MAIN_MENU.remove();
+      USER_MENU_BACKGROUND.classList.remove("hidden");
+
+      this.dragUserShips(this.USER_GAMEBOARD, this.SHIPS_ELEMENTS, this.SHIPS_OBJECTS);
+      this.rotateUserShips(this.SHIPS_ELEMENTS, this.SHIPS_OBJECTS);
    }
 
    allowStartButton() {
