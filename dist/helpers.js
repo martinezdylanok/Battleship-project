@@ -85,13 +85,6 @@ class Helpers {
       }
    }
 
-   appendFinalGrid() {
-      const GRID = document.getElementById("user-grid");
-      const USER_CONTAINER = document.getElementById("user-container");
-
-      USER_CONTAINER.appendChild(GRID);
-   }
-
    storeGameData(user, ai, userGameboard, aiGameboard) {
       this.USER = user;
       this.AI = ai;
@@ -105,11 +98,15 @@ class Helpers {
       FORM_BUTTON.addEventListener("click", () => {
          const INPUT_VALUE = document.getElementById("name-field").value;
          this.USER_NAME = INPUT_VALUE;
+
          this.creatAndDisplayGrids();
       });
    }
 
    creatAndDisplayGrids() {
+      const { AI } = this;
+      AI.autoPlaceShips(this.AI_GAMEBOARD);
+
       const USER_GRID = this.createGrid(this.USER_GAMEBOARD, this.USER);
       const AI_GRID = this.createGrid(this.AI_GAMEBOARD, this.AI);
 
@@ -133,17 +130,56 @@ class Helpers {
    allowStartButton() {
       const START_BUTTON = document.querySelector(".start-button");
       START_BUTTON.classList.add("allowed");
-      START_BUTTON.addEventListener("click", this.startGame.bind(this));
+      START_BUTTON.addEventListener("click", this.runGameLoop.bind(this));
+   }
+
+   appendFinalGrid() {
+      const GRID = document.getElementById("user-grid");
+      const USER_CONTAINER = document.getElementById("user-container");
+
+      USER_CONTAINER.appendChild(GRID);
    }
 
    startGame() {
-      const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
-      const MAIN_GAME = document.querySelector(".main-game");
+      return new Promise((resolve) => {
+         const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
+         const MAIN_GAME = document.querySelector(".main-game");
 
-      this.appendFinalGrid();
+         this.appendFinalGrid();
 
-      USER_MENU_BACKGROUND.remove();
-      MAIN_GAME.classList.remove("hidden");
+         USER_MENU_BACKGROUND.remove();
+         MAIN_GAME.classList.remove("hidden");
+
+         resolve();
+      });
+   }
+
+   async runGameLoop() {
+      await this.startGame();
+
+      const gameLoop = setInterval(async () => {
+         if (this.USER.isTurn) {
+            const PREVIOUS_SHOTS = this.AI_GAMEBOARD.missedShots;
+            const RESULT = await this.userAttack(this.AI, this.USER, this.AI_GAMEBOARD);
+            const X = RESULT[0];
+            const Y = RESULT[1];
+            this.updateAttackedCell(this.AI_GAMEBOARD, this.AI, PREVIOUS_SHOTS, X, Y);
+         } else if (this.AI.isTurn) {
+            const PREVIOUS_SHOTS = this.USER_GAMEBOARD.missedShots;
+            const RESULT = await this.AI.strategicAttack(this.USER_GAMEBOARD, this.USER, this.AI);
+            const X = RESULT[0];
+            const Y = RESULT[1];
+            this.updateAttackedCell(this.USER_GAMEBOARD, this.USER, PREVIOUS_SHOTS, X, Y);
+         }
+
+         if (this.USER_GAMEBOARD.areAllSunk) {
+            // Announce AI as the winner
+            clearInterval(gameLoop);
+         } else if (this.AI_GAMEBOARD.areAllSunk) {
+            // Announce USER as the winner
+            clearInterval(gameLoop);
+         }
+      }, 1000);
    }
 
    rotateUserShips(SHIPS_ELEMENTS, SHIPS_OBJECTS) {
@@ -254,10 +290,10 @@ class Helpers {
       }
    }
 
-   userAttack(opponent, player) {
+   userAttack(opponent, player, gameboard) {
       if (!player.isUser || !player.isTurn) return;
 
-      const AI_GAMEBOARD = document.getElementById("ai-gameboard");
+      const AI_GAMEBOARD = document.getElementById("ai-grid");
       const CELLS = AI_GAMEBOARD.querySelectorAll(".cell");
 
       return new Promise((resolve, reject) => {
@@ -271,10 +307,15 @@ class Helpers {
                USER.isTurn = false;
                const AI = opponent;
                AI.isTurn = true;
+               const AI_GAMEBOARD = gameboard;
+               AI_GAMEBOARD.receiveAttack(X, Y);
 
                CELLS.forEach((CELL) => {
                   CELL.removeEventListener("click", cellClickHandler);
                });
+
+               // Resolve the promise with the result
+               resolve([X, Y]);
             }
          }
 
