@@ -1,4 +1,5 @@
 import Ship from "./ship.js";
+import NEW_GAME from "./newGame.js";
 
 class Helpers {
    constructor() {
@@ -154,6 +155,31 @@ class Helpers {
       });
    }
 
+   announceWinner() {
+      const MAIN_GAME = document.querySelector(".main-game");
+
+      const WINNER_ANNOUNCEMENT_CONTAINER = document.createElement("div");
+      WINNER_ANNOUNCEMENT_CONTAINER.classList.add("winner-container");
+
+      const WINNER_MESSAGE = document.createElement("span");
+      WINNER_MESSAGE.classList.add("winner-message");
+
+      const RESTART_BUTTON = document.createElement("button");
+      RESTART_BUTTON.textContent = "RESTART GAME";
+      RESTART_BUTTON.classList.add("restart-button");
+
+      WINNER_ANNOUNCEMENT_CONTAINER.appendChild(WINNER_MESSAGE);
+      WINNER_ANNOUNCEMENT_CONTAINER.appendChild(RESTART_BUTTON);
+
+      MAIN_GAME.appendChild(WINNER_ANNOUNCEMENT_CONTAINER);
+
+      return WINNER_ANNOUNCEMENT_CONTAINER;
+   }
+
+   restartGame() {
+      location.reload();
+   }
+
    async runGameLoop() {
       await this.startGame();
 
@@ -173,11 +199,25 @@ class Helpers {
          }
 
          if (this.USER_GAMEBOARD.areAllSunk) {
-            // Announce AI as the winner
+            const WINNER_ANNOUNCEMENT_CONTAINER = this.announceWinner();
+            const WINNER_MESSAGE = WINNER_ANNOUNCEMENT_CONTAINER.querySelector(".winner-message");
+            const RESTART_BUTTON = WINNER_ANNOUNCEMENT_CONTAINER.querySelector(".restart-button");
+
+            WINNER_MESSAGE.innerText = "Congratulations AI, you won the match!";
+
             clearInterval(gameLoop);
+
+            RESTART_BUTTON.addEventListener("click", this.restartGame.bind(this));
          } else if (this.AI_GAMEBOARD.areAllSunk) {
-            // Announce USER as the winner
+            const WINNER_ANNOUNCEMENT_CONTAINER = this.announceWinner();
+            const WINNER_MESSAGE = WINNER_ANNOUNCEMENT_CONTAINER.querySelector(".winner-message");
+            const RESTART_BUTTON = WINNER_ANNOUNCEMENT_CONTAINER.querySelector(".restart-button");
+
+            WINNER_MESSAGE.innerText = `Congratulations ${this.USER_NAME}, you won the match!`;
+
             clearInterval(gameLoop);
+
+            RESTART_BUTTON.addEventListener("click", this.restartGame.bind(this));
          }
       }, 1000);
    }
