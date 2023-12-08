@@ -1,3 +1,3 @@
-import GAME from "../dist/game";
+import NEW_GAME from "../dist/newGame.js";
 
-GAME();
+NEW_GAME;
