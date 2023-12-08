@@ -21,7 +21,7 @@
                 </form>
             </nav>
         </div>
-        <div class="user-menu-background">
+        <div class="hidden user-menu-background">
             <div class="user-menu">
                 <div class="ships-and-button">
                     <div class="ships-container">
@@ -59,9 +59,15 @@
             </div>
             <button class="start-button">START</button>
         </div>
-        <div class="main-game">
-            <div class="gameboard-container" id="user-container"></div>
-            <div class="gameboard-container" id="ai-container"></div>
+        <div class="hidden main-game">
+            <div class="gameboards-container">
+                <div class="gameboard-container" id="user-container">
+                    <span>YOUR GAMEBOARD</span>
+                </div>
+                <div class="gameboard-container" id="ai-container">
+                    <span>OPPONENT'S GAMEBOARD</span>
+                </div>
+            </div>
         </div>
     </main>
     <footer>
