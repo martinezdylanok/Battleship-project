@@ -22,7 +22,9 @@ main {
    gap: 75px;
 }
 
-.main-menu {
+.main-menu,
+.user-menu-background,
+.main-game {
    display: flex;
    justify-content: center;
    position: fixed;
@@ -31,11 +33,11 @@ main {
    top: 0;
    left: 0;
    background-color: white;
-   transition: opacity 0.5s ease-in-out;
 }
 
-.main-menu.hidden {
-   opacity: 0;
+.hidden.user-menu-background,
+.hidden.main-game {
+   display: none;
 }
 
 .main-menu nav {
@@ -47,7 +49,6 @@ main {
    margin-top: 200px;
    background-color: rgba(0, 0, 0, 0.75);
    border: none;
-   border-radius: .2rem;
 }
 
 .main-menu span {
@@ -60,7 +61,8 @@ main {
 .main-menu form {
    display: flex;
    flex-direction: column;
-   justify-content: space-around;
+   padding-top: 100px;
+   gap: 50px;
    align-items: center;
    height: 100%;
    margin-top: 50px;
@@ -70,42 +72,33 @@ main {
    width: 200px;
    height: 30px;
    border: none;
-   border-radius: .2rem;
+   inset: none;
    background-color: white;
+}
+
+#name-field:focus {
+   outline: none;
 }
 
 #create-player {
    width: 150px;
-   height: 40px;
+   height: 50px;
    cursor: pointer;
-   font-size: 15px;
-   font-weight: 500;
    background-color: rgba(255, 255, 255, 1);
    border: none;
-   border-radius: .2rem;
-   transition: background-color .5s ease-in-out, color .5s ease-in-out, font-weight .5s ease-in-out;
+   transition: all .5s ease-in-out;
 }
 
 #create-player:hover {
-   background-color: rgba(0, 0, 0, 0.75);
-   color: white;
    font-weight: 600;
+   color: white;
+   background-color: rgba(0, 0, 0, 0.75);
 }
 
 .user-menu-background {
-   display: flex;
    flex-direction: column;
    align-items: center;
-   position: fixed;
    gap: 30px;
-   width: 100%;
-   height: 100%;
-   background-color: white;
-   transition: opacity 0.5s ease-in-out;
-}
-
-.user-menu-background.hidden {
-   opacity: 0;
 }
 
 .user-menu {
@@ -117,7 +110,6 @@ main {
    margin-top: 200px;
    background-color: rgba(0, 0, 0, 0.75);
    border: none;
-   border-radius: .2rem;
 }
 
 .ships-container {
@@ -140,7 +132,7 @@ main {
    transition: transform 0.5s ease-in-out;
 }
 
-.ship.rotated {
+.ship.rotated{
    transform: rotate(90deg);
 }
 
@@ -158,23 +150,33 @@ main {
    border: 1px solid black;
 }
 
-.rotate-button, .start-button {
-   width: 100px;
+.rotate-button,
+.start-button,
+.restart-button {
    height: 50px;
    cursor: pointer;
    font-weight: 500;
+   border: 1px solid black;
+   transition: all .5s ease-in-out;
 }
 
 .rotate-button {
    width: 100%;
 }
 
+.rotate-button:hover {
+   color: white;
+   font-weight: 600;
+   background-color: rgba(0, 0, 0, 0.75);
+}
+
 .start-button {
+   width: 100px;
    cursor: not-allowed;
    color: rgba(0, 0, 0, 0.4);
-   background-color: rgb(100, 100, 100, .1);
    font-weight: 600;
    border: none;
+   background-color: rgb(100, 100, 100, .1);
 }
 
 .start-button.allowed {
@@ -183,23 +185,29 @@ main {
    background-color: rgb(100, 100, 100, .8);
 }
 
-.main-game {
+.start-button.allowed:hover {
+   color: white;
+   background-color: black;
+}
+
+.gameboards-container {
    display: flex;
-   justify-content: center;
    align-items: center;
-   transition: opacity 0.5s ease-in-out;
+   gap: 200px;
+   margin-top: 150px;
 }
 
-.main-game.hidden {
-   opacity: 0;
-}
-
-.content-container {
+.gameboard-container {
    display: flex;
    flex-direction: column;
    justify-content: center;
    align-items: center;
-   gap: 20px;
+   gap: 10px;
+}
+
+.gameboard-container span{
+   font-size: 25px;
+   font-weight: 600;
 }
 
 .grid {
@@ -219,6 +227,10 @@ main {
    border: 1px solid black;
    font-weight: 600;
    color: rgb(0, 0, 0);
+}
+
+.cell.occupied {
+   background-color: rgba(2, 2, 2, 0.5);
 }
 
 .cell:hover {
@@ -241,10 +253,37 @@ main {
 
 #ai-container .cell:hover  {
    background-color: rgba(255, 255, 255, 0.901);
+   cursor: crosshair;
 }
 
-span {
+.winner-container {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   position: absolute;
+   gap: 20px;
+   z-index: 1;
+   top: 480px;
+   width: 440px;
+   height: 200px;
+   border: 2px solid black;
+   border-radius: .2rem;
+   background-color: white;
+}
+
+.winner-message {
    font-size: 20px;
+}
+
+.restart-button  {
+   width: 100px;
+}
+
+.restart-button:hover {
+   color: white;
+   background-color: black;
+   font-weight: 600;
 }
 
 footer {
