@@ -24,48 +24,22 @@ describe("Testing placeShip method conditions", () => {
 
    it("Not placing a ship horizontally that goes out of bounds", () => {
       const GAMEBOARD = new Gameboard();
-      GAMEBOARD.placeShip(9, 5, new Ship("Horizontal", "Patrolboat"));
-      expect(GAMEBOARD.grid[9][5]).toBe(" ");
+      GAMEBOARD.placeShip(9, 6, new Ship("Horizontal", "Carrier"));
+      expect(GAMEBOARD.grid[9][6]).toBe(" ");
    });
 
    it("Not placing a ship horizontally with overlapping ships", () => {
       const GAMEBOARD = new Gameboard();
       GAMEBOARD.placeShip(0, 0, new Ship("Horizontal", "Submarine"));
-      GAMEBOARD.placeShip(2, 0, new Ship("Horizontal", "Patrolboat"));
-      expect(GAMEBOARD.grid[2][0]).toBe("S");
+      GAMEBOARD.placeShip(0, 1, new Ship("Horizontal", "Patrolboat"));
+      expect(GAMEBOARD.grid[0][1]).toBe("S");
    });
 
    it("Place a ship horizontally without overlapping other ships", () => {
       const GAMEBOARD = new Gameboard();
       GAMEBOARD.placeShip(0, 0, new Ship("Horizontal", "Submarine"));
-      GAMEBOARD.placeShip(0, 4, new Ship("Horizontal", "Destroyer"));
+      GAMEBOARD.placeShip(4, 0, new Ship("Horizontal", "Destroyer"));
 
-      expect(GAMEBOARD.grid[0][0]).toBe("S");
-      expect(GAMEBOARD.grid[1][0]).toBe("S");
-      expect(GAMEBOARD.grid[2][0]).toBe("S");
-
-      expect(GAMEBOARD.grid[0][4]).toBe("D");
-      expect(GAMEBOARD.grid[1][4]).toBe("D");
-      expect(GAMEBOARD.grid[2][4]).toBe("D");
-   });
-
-   it("Not placing a ship vertically that goes out of bounds", () => {
-      const GAMEBOARD = new Gameboard();
-      GAMEBOARD.placeShip(5, 9, new Ship("Vertical", "Patrolboat"));
-      expect(GAMEBOARD.grid[5][9]).toBe(" ");
-   });
-
-   it("Not placing a ship vertically with overlapping ships", () => {
-      const GAMEBOARD = new Gameboard();
-      GAMEBOARD.placeShip(0, 0, new Ship("Vertical", "Submarine"));
-      const SHIP_PLACED = GAMEBOARD.placeShip(0, 2, new Ship("Vertical", "Patrolboat"));
-      expect(GAMEBOARD.grid[0][1]).toBe("S");
-   });
-
-   it("Place a ship vertically without overlapping other ships", () => {
-      const GAMEBOARD = new Gameboard();
-      GAMEBOARD.placeShip(0, 0, new Ship("Vertical", "Submarine"));
-      GAMEBOARD.placeShip(4, 0, new Ship("Vertical", "Destroyer"));
       expect(GAMEBOARD.grid[0][0]).toBe("S");
       expect(GAMEBOARD.grid[0][1]).toBe("S");
       expect(GAMEBOARD.grid[0][2]).toBe("S");
@@ -73,6 +47,32 @@ describe("Testing placeShip method conditions", () => {
       expect(GAMEBOARD.grid[4][0]).toBe("D");
       expect(GAMEBOARD.grid[4][1]).toBe("D");
       expect(GAMEBOARD.grid[4][2]).toBe("D");
+   });
+
+   it("Not placing a ship vertically that goes out of bounds", () => {
+      const GAMEBOARD = new Gameboard();
+      GAMEBOARD.placeShip(6, 9, new Ship("Vertical", "Carrier"));
+      expect(GAMEBOARD.grid[6][9]).toBe(" ");
+   });
+
+   it("Not placing a ship vertically with overlapping ships", () => {
+      const GAMEBOARD = new Gameboard();
+      GAMEBOARD.placeShip(0, 0, new Ship("Vertical", "Submarine"));
+      GAMEBOARD.placeShip(1, 0, new Ship("Vertical", "Patrolboat"));
+      expect(GAMEBOARD.grid[1][0]).toBe("S");
+   });
+
+   it("Place a ship vertically without overlapping other ships", () => {
+      const GAMEBOARD = new Gameboard();
+      GAMEBOARD.placeShip(0, 0, new Ship("Vertical", "Submarine"));
+      GAMEBOARD.placeShip(0, 4, new Ship("Vertical", "Destroyer"));
+      expect(GAMEBOARD.grid[0][0]).toBe("S");
+      expect(GAMEBOARD.grid[1][0]).toBe("S");
+      expect(GAMEBOARD.grid[2][0]).toBe("S");
+
+      expect(GAMEBOARD.grid[0][4]).toBe("D");
+      expect(GAMEBOARD.grid[1][4]).toBe("D");
+      expect(GAMEBOARD.grid[2][4]).toBe("D");
    });
 
    it("Return already placed ships", () => {
@@ -116,9 +116,9 @@ describe("Testing receiveAttack method conditions", () => {
       const SHIP = new Ship("Horizontal", "Patrolboat");
       GAMEBOARD.placeShip(0, 0, SHIP);
       expect(GAMEBOARD.grid[0][0]).toBe("P");
-      for (let i = 1; i < SHIP.length; i += 1) {
-         GAMEBOARD.receiveAttack(i, 0, USER);
-         expect(GAMEBOARD.grid[i][0]).toBe("X");
+      for (let i = 0; i < SHIP.length; i += 1) {
+         GAMEBOARD.receiveAttack(0, i, USER);
+         expect(GAMEBOARD.grid[0][i]).toBe("X");
       }
       expect(SHIP.isSunk).toBeTruthy();
    });
@@ -150,16 +150,16 @@ describe("Testing receiveAttack method conditions", () => {
       const SHIP = new Ship("Horizontal", "Patrolboat");
       const SHIP2 = new Ship("Horizontal", "Submarine");
       GAMEBOARD.placeShip(0, 0, SHIP);
-      GAMEBOARD.placeShip(2, 0, SHIP2);
+      GAMEBOARD.placeShip(0, 2, SHIP2);
 
       GAMEBOARD.receiveAttack(0, 0, USER);
       expect(SHIP.sunkState).toBeFalsy();
-      GAMEBOARD.receiveAttack(1, 0, USER);
+      GAMEBOARD.receiveAttack(0, 1, USER);
       expect(SHIP.sunkState).toBeTruthy();
       expect(GAMEBOARD.areAllSunk).toBe(false);
 
-      for (let i = 2; i < SHIP2.length + 2; i += 1) {
-         GAMEBOARD.receiveAttack(i, 0, USER);
+      for (let i = 0; i < SHIP2.length + 2; i += 1) {
+         GAMEBOARD.receiveAttack(0, i, USER);
       }
       expect(SHIP2.sunkState).toBeTruthy();
       expect(GAMEBOARD.areAllSunk).toBeTruthy();
