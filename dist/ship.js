@@ -2,7 +2,7 @@ class Ship {
    constructor(position, type) {
       this.position = position;
       this.type = type;
-      this.length = this.assignLength(type);
+      this.length = Ship.assignLength(type);
       this.hitsNum = 0;
       this.sunkState = this.isSunk();
    }
@@ -12,26 +12,24 @@ class Ship {
       this.sunkState = this.isSunk();
    }
 
-   assignLength(type) {
-      if (type === "Carrier") {
-         return 5;
-      }
-      if (type === "Battleship") {
-         return 4;
-      }
-      if (type === "Destroyer" || type === "Submarine") {
-         return 3;
-      }
-      if (type === "Patrolboat") {
-         return 2;
+   static assignLength(type) {
+      switch (type) {
+         case "Carrier":
+            return 5;
+         case "Battleship":
+            return 4;
+         case "Destroyer":
+         case "Submarine":
+            return 3;
+         case "Patrolboat":
+            return 2;
+         default:
+            throw new Error(`Unknown ship type: ${type}`);
       }
    }
 
    isSunk() {
-      if (this.hitsNum >= this.length) {
-         return true;
-      }
-      return false;
+      return this.hitsNum >= this.length;
    }
 }
 
