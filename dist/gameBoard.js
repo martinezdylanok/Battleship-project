@@ -59,13 +59,9 @@ class Gameboard {
    }
 
    receiveAttack(x, y) {
-      if (x < 0 || x > this.width || y < 0 || y > this.height) {
-         return;
-      }
-
-      if (this.grid[x][y] === "X" || this.grid[x][y] === "O") {
-         return;
-      }
+      if (x === null || y === null || x === undefined || y === undefined || x < 0 || x > this.width || y < 0 || y > this.height || this.grid[x][y] === "X" || this.grid[x][y] === "O") {
+         return undefined;
+      } // Handling all invalid coordinates at once
 
       if (this.grid[x][y] !== " ") {
          const SHIP_SYMBOL = this.grid[x][y];
@@ -83,6 +79,7 @@ class Gameboard {
          this.grid[x][y] = "O";
          this.missedShots += 1;
       }
+
       return [x, y];
    }
 }
