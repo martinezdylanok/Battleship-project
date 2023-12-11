@@ -1,5 +1,6 @@
 import Ship from "./ship.js";
-import NEW_GAME from "./newGame.js";
+import AiAttackHandler from "./aiAttackHandler.js";
+import AiShipPlacer from "./aiShipPlacer.js";
 
 class Helpers {
    constructor() {
@@ -35,11 +36,7 @@ class Helpers {
       const GRID = document.createElement("div");
       GRID.classList.add("grid");
 
-      if (player.isUser === true) {
-         GRID.setAttribute("id", "user-grid");
-      } else {
-         GRID.setAttribute("id", "ai-grid");
-      }
+      GRID.setAttribute("id", player.isUser ? "user-grid" : "ai-grid");
 
       for (let x = 0; x < gameboard.width; x += 1) {
          for (let y = 0; y < gameboard.height; y += 1) {
@@ -47,7 +44,7 @@ class Helpers {
             CELL.classList.add("cell");
             CELL.textContent = gameboard.grid[x][y];
 
-            if (player.isUser === false) {
+            if (!player.isUser) {
                CELL.classList.add("hidden-cell");
             }
 
@@ -61,29 +58,23 @@ class Helpers {
    }
 
    displayGrid(grid, player) {
-      if (player.isUser) {
-         const USER_GRID = grid;
-         const POSITIONING_CONTAINER = document.getElementById("positioning-container");
-
-         POSITIONING_CONTAINER.appendChild(USER_GRID);
-      } else {
-         const AI_GRID = grid;
-         const AI_CONTAINER = document.getElementById("ai-container");
-
-         AI_CONTAINER.appendChild(AI_GRID);
-      }
+      const CONTAINER = player.isUser ? document.getElementById("positioning-container") : document.getElementById("ai-container");
+      CONTAINER.appendChild(grid);
    }
 
-   updateGrid(USER_GAMEBOARD) {
+   updateUserGrid(USER_GAMEBOARD) {
       const GRID = document.getElementById("user-grid");
 
-      for (let x = 0; x < USER_GAMEBOARD.width; x += 1) {
-         for (let y = 0; y < USER_GAMEBOARD.height; y += 1) {
-            const CELL_ID = `user-cell-${x}-${y}`;
-            const CELL = GRID.querySelector(`#${CELL_ID}`);
-            CELL.textContent = USER_GAMEBOARD.grid[x][y];
+      Array.from(GRID.children).forEach((cell) => {
+         const [x, y] = cell.id.split("-").slice(-2).map(Number);
+         const shipSymbol = USER_GAMEBOARD.grid[x][y];
+
+         if ("CBDSP".includes(shipSymbol)) {
+            cell.classList.toggle("occupied", true);
+         } else {
+            cell.classList.remove("occupied");
          }
-      }
+      });
    }
 
    storeGameData(user, ai, userGameboard, aiGameboard) {
@@ -105,8 +96,8 @@ class Helpers {
    }
 
    creatAndDisplayGrids() {
-      const { AI } = this;
-      AI.autoPlaceShips(this.AI_GAMEBOARD);
+      const AI_SHIP_PLACER = new AiShipPlacer();
+      AI_SHIP_PLACER.autoPlaceShips(this.AI_GAMEBOARD);
 
       const USER_GRID = this.createGrid(this.USER_GAMEBOARD, this.USER);
       const AI_GRID = this.createGrid(this.AI_GAMEBOARD, this.AI);
@@ -142,9 +133,14 @@ class Helpers {
    }
 
    startGame() {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
          const USER_MENU_BACKGROUND = document.querySelector(".user-menu-background");
          const MAIN_GAME = document.querySelector(".main-game");
+
+         if (!USER_MENU_BACKGROUND || !MAIN_GAME) {
+            // Reject if elements are not found
+            reject(new Error("Game start failed. Required elements not found."));
+         }
 
          this.appendFinalGrid();
 
@@ -182,6 +178,7 @@ class Helpers {
 
    async runGameLoop() {
       await this.startGame();
+      const AI_ATTACK_HANDLER = new AiAttackHandler();
 
       const gameLoop = setInterval(async () => {
          if (this.USER.isTurn) {
@@ -192,7 +189,7 @@ class Helpers {
             this.updateAttackedCell(this.AI_GAMEBOARD, this.AI, PREVIOUS_SHOTS, X, Y);
          } else if (this.AI.isTurn) {
             const PREVIOUS_SHOTS = this.USER_GAMEBOARD.missedShots;
-            const RESULT = await this.AI.strategicAttack(this.USER_GAMEBOARD, this.USER, this.AI);
+            const RESULT = await AI_ATTACK_HANDLER.strategicAttack(this.USER_GAMEBOARD, this.USER, this.AI);
             const X = RESULT[0];
             const Y = RESULT[1];
             this.updateAttackedCell(this.USER_GAMEBOARD, this.USER, PREVIOUS_SHOTS, X, Y);
@@ -229,6 +226,7 @@ class Helpers {
          ROTATE_BUTTON.addEventListener("click", () => {
             SHIPS_ELEMENTS.forEach((SHIP_ELEMENT, index) => {
                const SHIP = SHIP_ELEMENT;
+               const SHIPS_OBJS = SHIPS_OBJECTS;
                const CURRENT_TRANSFORM = getComputedStyle(SHIP).transform;
                let CURRENT_ANGLE = 0;
 
@@ -238,16 +236,13 @@ class Helpers {
                   CURRENT_ANGLE = Math.round(Math.atan2(MATRIX.b, MATRIX.a) * (180 / Math.PI));
                }
 
-               // Determine the new angle based on the current angle
-               const NEW_ANGLE = (CURRENT_ANGLE + 90) % 360;
+               const NEW_ANGLE = CURRENT_ANGLE === 0 ? 90 : 0;
 
-               // Update the style.transform property with the new angle
                SHIP.style.transform = `rotate(${NEW_ANGLE}deg)`;
 
-               // Add/remove the rotated class based on the new angle
-               SHIP.classList.toggle("rotated", NEW_ANGLE % 180 !== 0);
+               SHIP.classList.toggle("rotated", NEW_ANGLE !== 0);
 
-               SHIPS_OBJECTS[index].position = NEW_ANGLE % 180 === 0 ? "Horizontal" : "Vertical";
+               SHIPS_OBJS[index].position = NEW_ANGLE === 0 ? "Horizontal" : "Vertical";
             });
          });
       }
@@ -268,11 +263,9 @@ class Helpers {
             SHIP_ELEMENT.dataset.dragged = "false";
          });
 
-         if (SHIPS_ELEMENTS.includes(draggedShip)) {
-            // Add a data attribute to mark the ship as currently dragged
+         if (INSTANCE.isDraggableShip(draggedShip)) {
             draggedShip.dataset.dragged = "true";
          } else {
-            // Prevent dragging if the ship is already placed
             e.preventDefault();
          }
       }
@@ -296,7 +289,7 @@ class Helpers {
                   SHIPS_OBJECTS.splice(INDEX, 1);
                   SHIPS_ELEMENTS.splice(INDEX, 1);
                   draggedShip.remove();
-                  INSTANCE.updateGrid(USER_GAMEBOARD);
+                  INSTANCE.updateUserGrid(USER_GAMEBOARD);
                   if (SHIPS_ELEMENTS.length <= 0) {
                      INSTANCE.allowStartButton();
                   }
@@ -314,29 +307,49 @@ class Helpers {
       });
    }
 
+   isDraggableShip(shipElement) {
+      return shipElement.draggable;
+   }
+
    updateAttackedCell(gameboard, player, PREVIOUS_SHOTS, X, Y) {
+      const CELL_ID = player.isUser ? `user-cell-${X}-${Y}` : `ai-cell-${X}-${Y}`;
+      const CELL = document.querySelector(`#${CELL_ID}`);
+
       if (gameboard.missedShots > PREVIOUS_SHOTS) {
-         const CELL_ID = player.isUser ? `user-cell-${X}-${Y}` : `ai-cell-${X}-${Y}`;
-         const CELL = document.querySelector(`#${CELL_ID}`);
-         CELL.classList.remove("hidden-cell");
-         CELL.textContent = "O";
-         CELL.classList.add("empty-cell");
+         this.updateMissedCell(CELL);
       } else {
-         const CELL_ID = player.isUser ? `user-cell-${X}-${Y}` : `ai-cell-${X}-${Y}`;
-         const CELL = document.querySelector(`#${CELL_ID}`);
-         CELL.classList.remove("hidden-cell");
-         CELL.textContent = "X";
-         CELL.classList.add("hit-cell");
+         this.updateHitCell(CELL);
       }
    }
 
+   updateMissedCell(cell) {
+      const CELL = cell;
+      CELL.classList.remove("hidden-cell");
+      CELL.textContent = "O";
+      CELL.classList.add("empty-cell");
+   }
+
+   updateHitCell(cell) {
+      const CELL = cell;
+      CELL.classList.remove("hidden-cell");
+
+      if (CELL.classList.contains("occupied")) {
+         CELL.classList.remove("occupied");
+      }
+
+      CELL.textContent = "X";
+      CELL.classList.add("hit-cell");
+   }
+
    userAttack(opponent, player, gameboard) {
-      if (!player.isUser || !player.isTurn) return;
+      if (!player.isUser || !player.isTurn) {
+         return Promise.reject(new Error("Invalid user attack."));
+      }
 
-      const AI_GAMEBOARD = document.getElementById("ai-grid");
-      const CELLS = AI_GAMEBOARD.querySelectorAll(".cell");
+      const AI_GRID = document.getElementById("ai-grid");
+      const CELLS = AI_GRID.querySelectorAll(".cell");
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
          function cellClickHandler(event) {
             const CLICKED_CELL = event.target;
             if (CLICKED_CELL.classList.contains("hidden-cell")) {
@@ -345,8 +358,10 @@ class Helpers {
 
                const USER = player;
                USER.isTurn = false;
+
                const AI = opponent;
                AI.isTurn = true;
+
                const AI_GAMEBOARD = gameboard;
                AI_GAMEBOARD.receiveAttack(X, Y);
 
