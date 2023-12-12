@@ -1,5 +1,7 @@
 # Battleship-project
 
+![project img](https://github.com/martinezdylanok/Battleship-project/assets/118355760/01315a2a-9a04-4b07-ae37-ed97ba76cf1a)
+
 ## What I have learned
 
 During the completion of the Battleship project as part of The Odin Project's Node.js path, I acquired a comprehensive set of skills and utilized various tools to build a functional and engaging web application. Here's a breakdown of what I learned throughout this project:
