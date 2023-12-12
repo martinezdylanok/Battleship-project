@@ -1,3 +1,3 @@
-import GAME from "../dist/newGame.js";
+import GAME from "../dist/game.js";
 
 GAME;
