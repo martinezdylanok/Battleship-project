@@ -221,28 +221,21 @@ class Helpers {
 
    rotateUserShips(SHIPS_ELEMENTS, SHIPS_OBJECTS) {
       const ROTATE_BUTTON = document.querySelector(".rotate-button");
+      const SHIPS_CONTAINER = document.querySelector(".ships-container");
 
       if (SHIPS_ELEMENTS.length > 0 && SHIPS_OBJECTS.length > 0) {
          ROTATE_BUTTON.addEventListener("click", () => {
+            SHIPS_CONTAINER.classList.toggle("rotated");
+
             SHIPS_ELEMENTS.forEach((SHIP_ELEMENT, index) => {
                const SHIP = SHIP_ELEMENT;
                const SHIPS_OBJS = SHIPS_OBJECTS;
-               const CURRENT_TRANSFORM = getComputedStyle(SHIP).transform;
-               let CURRENT_ANGLE = 0;
 
-               // Extract the current rotation angle from the transform property
-               if (CURRENT_TRANSFORM) {
-                  const MATRIX = new DOMMatrix(CURRENT_TRANSFORM);
-                  CURRENT_ANGLE = Math.round(Math.atan2(MATRIX.b, MATRIX.a) * (180 / Math.PI));
-               }
+               SHIP.classList.toggle("rotated");
 
-               const NEW_ANGLE = CURRENT_ANGLE === 0 ? 90 : 0;
+               const isRotated = SHIP.classList.contains("rotated");
 
-               SHIP.style.transform = `rotate(${NEW_ANGLE}deg)`;
-
-               SHIP.classList.toggle("rotated", NEW_ANGLE !== 0);
-
-               SHIPS_OBJS[index].position = NEW_ANGLE === 0 ? "Horizontal" : "Vertical";
+               SHIPS_OBJS[index].position = isRotated ? "Vertical" : "Horizontal";
             });
          });
       }
@@ -369,7 +362,6 @@ class Helpers {
                   CELL.removeEventListener("click", cellClickHandler);
                });
 
-               // Resolve the promise with the result
                resolve([X, Y]);
             }
          }
