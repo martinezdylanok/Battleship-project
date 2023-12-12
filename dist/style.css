@@ -125,15 +125,19 @@ main {
    border: 1px solid black;
 }
 
+.ships-container.rotated {
+   flex-direction: row;
+}
+
 .ship {
    display: flex;
-   height: 40px;
+   flex-direction: row;
    border: 1px solid black;
    transition: transform 0.5s ease-in-out;
 }
 
-.ship.rotated{
-   transform: rotate(90deg);
+.ship.rotated {
+   flex-direction: column;
 }
 
 .ship:hover {
@@ -146,6 +150,7 @@ main {
 [data-type="Destroyer"] .part,
 [data-type="Submarine"] .part,
 [data-type="Patrolboat"] .part {
+   height: 40px;
    width: 40px;
    border: 1px solid black;
 }
